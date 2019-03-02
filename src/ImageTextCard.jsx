@@ -1,11 +1,7 @@
 import React, { PureComponent } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core';
 import CopyButton from './CopyButton';
 
@@ -45,10 +41,12 @@ class ImageTextCard extends PureComponent {
       <Card className={classes.card}>
         <Grid container direction="column" spacing={24} justify="center">
           <Grid item className={classes.imageContainer}>
-            <img className={classes.image} src={imageSrc} />
+            <img className={classes.image} src={imageSrc} alt="Uploaded file" />
           </Grid>
           <Grid item>
-            <textarea id="recognized-text" className={classes.text} defaultValue={text || "No text found in the Image"} />
+            {text?
+            <textarea id="recognized-text" className={classes.text} defaultValue={text} />
+            : <label>No text found in the Image</label> }
           </Grid>
         </Grid>
 

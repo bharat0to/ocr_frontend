@@ -78,10 +78,10 @@ class App extends React.Component {
             <div className={classes.mainImage}>
               <Grid container direction="row" alignItems="center" justify="center" spacing={40}>
                 <Grid item>
-                  <img src={poetryImg} />
+                  <img src={poetryImg} alt="Poetry" />
                 </Grid>
                 <Grid item>
-                  <img src={poetryTextImg} />
+                  <img src={poetryTextImg} alt="Poetry text"/>
                 </Grid>
               </Grid>
             </div>

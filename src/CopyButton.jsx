@@ -1,4 +1,5 @@
 import React from 'react';
+import copy from 'clipboard-copy';
 import Button from '@material-ui/core/Button';
 
 
@@ -7,23 +8,19 @@ class CopyButton extends React.Component {
     copied: false
   }
 
-  copyToClipboard = (text) => {
-    const textField = document.createElement('textarea');
-    textField.innerText = text;
-    // textField.hidden = true;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand('copy');
-    document.body.removeChild(textField);
-  }
-
-  handleCopy = () => {
-    const { text } = this.props;
-    this.copyToClipboard(text)
+  showCopied = () => {
     this.setState({
       copied: true
     }, () => setTimeout(() => this.setState({ copied: false }), 3000))
   }
+
+  handleCopy = async () => {
+    try {
+      await copy(this.props.text);
+    } finally {
+      this.showCopied()
+    }
+  };
 
   render() {
     return (

@@ -26,6 +26,10 @@ const styles = theme => ({
   icon: {
     color: theme.palette.primary.main,
     fontSize: 60
+  },
+  limit: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   }
 })
 
@@ -39,7 +43,7 @@ const initialState = {
 }
 
 class DropBox extends React.Component {
-  statusTypes = ['NEW', 'READING', 'UPLOADING', 'SUCCESS', 'FAILED', 'REJECTED']
+  statusTypes = ['NEW', 'READING', 'UPLOADING', 'SUCCESS', 'FAILED', 'REJECTED', 'FILELIMIT']
   state = initialState
 
   onDrop = (acceptedFiles, rejectedFiles) => {
@@ -51,9 +55,16 @@ class DropBox extends React.Component {
       }
       return
     };
+
+    // check file size < 2MB
+    if(file.size > 2097152) { // 2 * 1024 * 1024
+      this.setState({ status: 'FILELIMIT' })
+      return
+    }
+
     this.setState({ status: 'READING', filename: file.name })
     var reader = new FileReader();
-    var url = reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
     reader.onloadend = (e) => this.setState(({status}) => (
       { image: reader.result, status: status === 'READING'? 'UPLOADING' : status }))
 
@@ -127,37 +138,42 @@ class DropBox extends React.Component {
         )
       default:
         return (
-          <Dropzone
-            onDrop={this.onDrop}
-            accept="image/*"
-            multiple={false}
-          >
-            {({ getRootProps, getInputProps, isDragActive }) => {
-              return (
-                <Grid container direction="column" alignItems="center"
+          <div>
+            <Dropzone
+              onDrop={this.onDrop}
+              accept="image/*"
+              multiple={false}
+              >
+              {({ getRootProps, getInputProps, isDragActive }) => {
+                return (
+                  <Grid container direction="column" alignItems="center"
                   {...getRootProps()}
                   className={classNames(classes.dropzone, { [classes.activeDropzone]: isDragActive })}
-                >
-                  <input {...getInputProps()} />
-                  <Grid item>
-                    <UploadIcon className={classes.icon} />
-                  </Grid>
-                  {!isMobile &&
+                  >
+                    <input {...getInputProps()} />
                     <Grid item>
-                      <Typography variant="h5" color="textSecondary">
-                        DRAG & DROP
+                      <UploadIcon className={classes.icon} />
+                    </Grid>
+                    {!isMobile &&
+                      <Grid item>
+                        <Typography variant="h5" color="textSecondary">
+                          DRAG & DROP
+                        </Typography>
+                      </Grid>
+                    }
+                    <Grid item>
+                      <Typography variant="h6">
+                        Click to select an image file
                       </Typography>
                     </Grid>
-                  }
-                  <Grid item>
-                    <Typography variant="h6">
-                      Click to select an image file
-                    </Typography>
                   </Grid>
-                </Grid>
-              )
-            }}
-          </Dropzone>
+                )
+              }}
+            </Dropzone>
+            <Typography variant="caption" color={status==='FILELIMIT'?"error":"default"} className={classes.limit}>
+              {"Filesize limit: < 2MB"}
+            </Typography>
+          </div>
         )
     }
   }
