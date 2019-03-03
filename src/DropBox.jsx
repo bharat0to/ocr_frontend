@@ -33,7 +33,7 @@ const styles = theme => ({
   }
 })
 
-const URL = 'https://3.86.167.38:5000/scan'
+const URL = 'http://3.86.167.38:5000/scan'
 
 const initialState = {
   status: 'NEW',
